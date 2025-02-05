@@ -38,14 +38,14 @@ if uploaded_file is not None:
             continue
         
         # Volatilidade histórica
-        vol_anualizada_hist = df_period['Retornos_Log'].std(ddof=1) * np.sqrt(252)
+        vol_anualizada_hist = (df_period['Retornos_Log'].std(ddof=1) * np.sqrt(252)) / 100
         volatilidade_historica[years] = vol_anualizada_hist
         
         # Volatilidade GARCH(1,1)
         try:
             model = arch_model(df_period['Retornos_Log'] * 10, vol='Garch', p=1, q=1)
             garch_result = model.fit(disp='off')
-            vol_diaria_media = garch_result.conditional_volatility.mean() / 10
+            vol_diaria_media = (garch_result.conditional_volatility.mean() / 10) / 100
             vol_anualizada_garch = vol_diaria_media * np.sqrt(252)
             volatilidade_garch[years] = vol_anualizada_garch
         except:
@@ -58,16 +58,9 @@ if uploaded_file is not None:
     })
     df_volatilidade.index.name = 'Período (Anos)'
     
-    # Formatar para o padrão brasileiro (vírgula para decimais)
-    df_volatilidade = df_volatilidade.applymap(lambda x: f"{x:.2%}".replace('.', ',') if pd.notna(x) else '-')
-    
-    # Exibir os resultados no Streamlit
+    # Exibir os dados sem multiplicação por 100 (base percentual já aplicada)
     st.subheader("Tabela de Volatilidade")
-    # Formatar os valores como porcentagem e substituir o ponto por vírgula
-    df_volatilidade_formatado = df_volatilidade.applymap(lambda x: f"{x:.2%}".replace('.', ',') if isinstance(x, float) else x)
-
-    # Exibir no Streamlit
-    st.dataframe(df_volatilidade_formatado)
+    st.dataframe(df_volatilidade)
     
     # Criar um arquivo Excel para download
     output = io.BytesIO()
