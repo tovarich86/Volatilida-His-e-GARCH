@@ -63,7 +63,11 @@ if uploaded_file is not None:
     
     # Exibir os resultados no Streamlit
     st.subheader("Tabela de Volatilidade")
-    st.dataframe(df_volatilidade.style.format("{:.2%}".replace('.', ',')))
+    # Formatar os valores como porcentagem e substituir o ponto por vírgula
+    df_volatilidade_formatado = df_volatilidade.applymap(lambda x: f"{x:.2%}".replace('.', ',') if isinstance(x, float) else x)
+
+    # Exibir no Streamlit
+    st.dataframe(df_volatilidade_formatado)
     
     # Criar um arquivo Excel para download
     output = io.BytesIO()
