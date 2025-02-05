@@ -12,7 +12,9 @@ st.title("Cálculo de Volatilidade Histórica e GARCH")
 uploaded_file = st.file_uploader("Faça upload do arquivo Excel contendo os dados", type=["xlsx"])
 
 if uploaded_file is not None:
-    df = pd.read_excel(uploaded_file, parse_dates=['Date'], dayfirst=True)
+    df = pd.read_excel(uploaded_file)
+    df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y', errors='coerce')
+
     
     # Converter a coluna 'Date' para datetime explicitamente caso não tenha sido convertida
     df['Date'] = pd.to_datetime(df['Date'], dayfirst=True, errors='coerce')
