@@ -9,7 +9,7 @@ st.set_page_config(page_title="Análise de Volatilidade", layout="wide")
 st.title("Cálculo de Volatilidade Histórica e GARCH")
 
 # Criar um layout de arquivo para importação
-st.subheader("📥 Baixar Modelo de Arquivo para Importação")
+st.subheader("📥 Baixar Modelo de Arquivo para Importação (necessário somente DATE e CLOSE")
 modelo_df = pd.DataFrame({
     'Date': ['04/01/2016', '05/01/2016'],
     'Adj Close': [7.24812, 7.15102],
@@ -27,7 +27,7 @@ with pd.ExcelWriter(output_model, engine='xlsxwriter') as writer:
 output_model.seek(0)
 
 st.download_button(
-    label="📥 Baixar Modelo de Arquivo",
+    label="📥 Modelo de Arquivo",
     data=output_model,
     file_name="modelo_importacao.xlsx",
     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
