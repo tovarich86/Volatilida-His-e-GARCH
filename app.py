@@ -45,14 +45,14 @@ if uploaded_file is not None:
             continue
         
         # Volatilidade histórica
-        vol_anualizada_hist = (df_period['Retornos_Log'].std(ddof=1) * np.sqrt(252)) / 100
+        vol_anualizada_hist = (df_period['Retornos_Log'].std(ddof=1) * np.sqrt(252)) 
         volatilidade_historica[years] = vol_anualizada_hist
         
         # Volatilidade GARCH(1,1)
         try:
             model = arch_model(df_period['Retornos_Log'] * 10, vol='Garch', p=1, q=1)
             garch_result = model.fit(disp='off')
-            vol_diaria_media = (garch_result.conditional_volatility.mean() / 10) / 100
+            vol_diaria_media = (garch_result.conditional_volatility.mean() / 10) 
             vol_anualizada_garch = vol_diaria_media * np.sqrt(252)
             volatilidade_garch[years] = vol_anualizada_garch
         except:
