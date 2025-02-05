@@ -13,6 +13,8 @@ uploaded_file = st.file_uploader("Faça upload do arquivo Excel contendo os dado
 
 if uploaded_file is not None:
     df = pd.read_excel(uploaded_file, parse_dates=['Date'])
+    
+    # Ordenar os dados do mais novo para o mais antigo
     df = df.sort_values(by='Date', ascending=False).copy()
     
     # Criar dicionários para armazenar os resultados
