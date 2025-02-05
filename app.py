@@ -9,7 +9,7 @@ st.set_page_config(page_title="Análise de Volatilidade", layout="wide")
 st.title("Cálculo de Volatilidade Histórica e GARCH")
 
 # Criar um layout de arquivo para importação
-st.subheader("📥 Baixar Modelo de Arquivo para Importação (necessário somente DATE e CLOSE")
+st.subheader("📥 Baixar Modelo de Arquivo para Importação (necessário somente DATE e CLOSE)")
 modelo_df = pd.DataFrame({
     'Date': ['04/01/2016', '05/01/2016'],
     'Adj Close': [7.24812, 7.15102],
