@@ -4,3 +4,4 @@ numpy
 arch
 xlsxwriter
 openpyxl
+io
