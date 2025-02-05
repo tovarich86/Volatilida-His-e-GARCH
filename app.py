@@ -8,16 +8,37 @@ import io
 st.set_page_config(page_title="Análise de Volatilidade", layout="wide")
 st.title("Cálculo de Volatilidade Histórica e GARCH")
 
+# Criar um layout de arquivo para importação
+st.subheader("📥 Baixar Modelo de Arquivo para Importação")
+modelo_df = pd.DataFrame({
+    'Date': ['04/01/2016', '05/01/2016'],
+    'Adj Close': [7.24812, 7.15102],
+    'Close': [12.69, 12.52],
+    'High': [12.97, 12.84],
+    'Low': [12.47, 12.41],
+    'Open': [12.48, 12.67],
+    'Volume': [4587900, 2693500],
+    'Ticker': ['VALE3.SA', 'VALE3.SA']
+})
+output_model = io.BytesIO()
+with pd.ExcelWriter(output_model, engine='xlsxwriter') as writer:
+    modelo_df.to_excel(writer, sheet_name='Modelo', index=False)
+    writer.close()
+output_model.seek(0)
+
+st.download_button(
+    label="📥 Baixar Modelo de Arquivo",
+    data=output_model,
+    file_name="modelo_importacao.xlsx",
+    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+)
+
 # Upload do arquivo Excel
 uploaded_file = st.file_uploader("Faça upload do arquivo Excel contendo os dados", type=["xlsx"])
 
 if uploaded_file is not None:
     df = pd.read_excel(uploaded_file)
     df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y', errors='coerce')
-
-    
-    # Converter a coluna 'Date' para datetime explicitamente caso não tenha sido convertida
-    df['Date'] = pd.to_datetime(df['Date'], dayfirst=True, errors='coerce')
     
     # Ordenar os dados do mais novo para o mais antigo
     df = df.sort_values(by='Date', ascending=False).copy()
@@ -45,14 +66,14 @@ if uploaded_file is not None:
             continue
         
         # Volatilidade histórica
-        vol_anualizada_hist = (df_period['Retornos_Log'].std(ddof=1) * np.sqrt(252)) 
+        vol_anualizada_hist = (df_period['Retornos_Log'].std(ddof=1) * np.sqrt(252)) / 100
         volatilidade_historica[years] = vol_anualizada_hist
         
         # Volatilidade GARCH(1,1)
         try:
             model = arch_model(df_period['Retornos_Log'] * 10, vol='Garch', p=1, q=1)
             garch_result = model.fit(disp='off')
-            vol_diaria_media = (garch_result.conditional_volatility.mean() / 10) 
+            vol_diaria_media = (garch_result.conditional_volatility.mean() / 10) / 100
             vol_anualizada_garch = vol_diaria_media * np.sqrt(252)
             volatilidade_garch[years] = vol_anualizada_garch
         except:
